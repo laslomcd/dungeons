@@ -1,34 +1,33 @@
 <?php
 
-namespace App;
+namespace App\Filters;
 
 use App\User;
-use Request;
+use Illuminate\Http\Request;
 
-class ThreadFilters
+class ThreadFilters extends Filters
 {
 
+    protected $filters = ['by', 'popular'];
     /**
-     * ThreadFilters constructor.
-     * @param Request $request
+     *
+     * @param $username
+     * @return mixed
      */
-    public function __construct(Request $request)
+    protected function by($username)
     {
-        $this->request = $request;
+        $user = User::where('name', $username)->firstOrFail();
+
+        return $this->builder->where('user_id', $user->id);
     }
 
     /**
-     * @param $builder
      * @return mixed
      */
-    public function apply($builder)
+    protected function popular()
     {
-        if (!$username = $this->request->by) return $builder;
-
-        $user = User::where('name', $username)->firstOrFail();
-
-        return $builder->where('user_id', $user->id);
-
+        $this->builder->getQuery()->orders = [];
+        return $this->builder->orderBy('replies_count', 'desc');
     }
 
 

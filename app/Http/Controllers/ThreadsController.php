@@ -30,8 +30,12 @@ class ThreadsController extends Controller
      */
     public function index(Channel $channel, ThreadFilters $filters)
     {
-        $threads = Thread::filter($filters)->get();
-//        $threads = $this->getThreads($channel);
+        $threads = $this->getThreads($channel, $filters);
+
+        if(request()->wantsJson()) {
+            return $threads;
+        }
+
 
 
         return view('threads.index', compact('threads'));
@@ -80,7 +84,10 @@ class ThreadsController extends Controller
      */
     public function show($channelId, Thread $thread)
     {
-        return view('threads.show', compact('thread'));
+        return view('threads.show', [
+            'thread' => $thread,
+            'replies' => $thread->replies()->paginate(15)
+        ]);
     }
 
     /**
@@ -119,22 +126,19 @@ class ThreadsController extends Controller
 
     /**
      * @param Channel $channel
-     * @return Thread|Thread[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Query\Builder|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
+     * @param ThreadFilters $filters
+     * @return mixed
      */
-    protected function getThreads(Channel $channel)
+    protected function getThreads(Channel $channel, ThreadFilters $filters)
     {
-        if ($channel->exists) {
-            $threads = $channel->threads()->latest();
-        } else {
-            $threads = Thread::latest();
-        }
+        $threads = Thread::latest()->filter($filters);
 
-        if ($username = request('by')) {
-            $user = User::where('name', $username)->firstOrFail();
-            $threads->where('user_id', $user->id);
+        if ($channel->exists) {
+            $threads->where('channel_id', $channel->id);
         }
 
         $threads = $threads->get();
         return $threads;
     }
+
 }
