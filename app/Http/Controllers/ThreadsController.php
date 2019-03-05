@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 
+use function abort;
 use App\Channel;
 use App\Thread;
 use App\Filters\ThreadFilters;
 use App\User;
+use function auth;
 use function compact;
 use Illuminate\Http\Request;
 use function redirect;
+use function response;
 
 class ThreadsController extends Controller
 {
@@ -122,6 +125,8 @@ class ThreadsController extends Controller
      */
     public function destroy(Channel $channel, Thread $thread)
     {
+        $this->authorize('update', $thread);
+
         $thread->delete();
 
         if(request()->wantsJson()) {
