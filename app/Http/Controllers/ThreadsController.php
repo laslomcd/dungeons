@@ -9,6 +9,7 @@ use App\Filters\ThreadFilters;
 use App\User;
 use function compact;
 use Illuminate\Http\Request;
+use function redirect;
 
 class ThreadsController extends Controller
 {
@@ -35,8 +36,6 @@ class ThreadsController extends Controller
         if(request()->wantsJson()) {
             return $threads;
         }
-
-
 
         return view('threads.index', compact('threads'));
     }
@@ -117,11 +116,20 @@ class ThreadsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Thread $thread
-     * @return void
+     * @param Channel $channel
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
-    public function destroy(Thread $thread)
+    public function destroy(Channel $channel, Thread $thread)
     {
-        //
+        $thread->delete();
+
+        if(request()->wantsJson()) {
+            return response([], 204);
+        }
+
+        return redirect('/threads');
+
     }
 
     /**
