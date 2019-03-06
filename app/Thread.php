@@ -2,10 +2,16 @@
 
 namespace App;
 
+use function auth;
+use function get_class;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionClass;
+use function strtolower;
 
 class Thread extends Model
 {
+
+    use RecordsActivity;
 
     protected $guarded = [];
 
@@ -22,6 +28,7 @@ class Thread extends Model
         static::deleting(function ($thread) {
             $thread->replies()->delete();
         });
+
     }
 
     /**
