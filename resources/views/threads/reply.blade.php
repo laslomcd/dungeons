@@ -5,7 +5,7 @@
             <div class="level">
                 <h5 class="flex">
                     <a href="{{ route('profile', $reply->owner) }}"> {{ $reply->owner->name }}</a> said
-                    {{ $reply->created_at->diffForHumans() }}
+                    {{ $reply->created_at->diffForHumans() }}...
                 </h5>
                 <div>
 
@@ -37,12 +37,7 @@
         @can('update', $reply)
             <div class="panel-footer level">
                 <button class="btn btn-info btn-xs mr-1" @click="editing = true">Edit</button>
-                <form method="post" action="/replies/{{ $reply->id }}">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-
-                    <button type="submit" class="btn btn-danger btn-xs">Delete</button>
-                </form>
+                <button class="btn btn-danger btn-xs mr-1" @click="destroy">Delete</button>
             </div>
         @endcan
     </div>
