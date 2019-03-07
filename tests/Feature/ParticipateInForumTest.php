@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use function auth;
 use function factory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Password;
@@ -47,5 +48,59 @@ class ParticipateInForumTest extends TestCase
 
         $this->post($thread->path() .'/replies', $reply->toArray())
             ->assertSessionHasErrors('body');
+    }
+
+    /** @test */
+    function unauthorized_users_cannot_delete_replies()
+    {
+        $this->withExceptionHandling();
+
+        $reply = create('App\Reply');
+
+        $this->delete("/replies/{$reply->id}")
+            ->assertRedirect('/login');
+
+        $this->signIn()
+            ->delete("/replies/{$reply->id}")
+            ->assertStatus(403);
+
+    }
+
+    /** @test */
+    function authorized_users_can_delete_replies()
+    {
+        $this->signIn();
+        $reply = create('App\Reply', ['user_id' => auth()->id()]);
+
+        $this->delete("/replies/{$reply->id}")->assertStatus(302);
+
+        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+
+    }
+
+    /** @test */
+    function authorized_users_can_update_replies()
+    {
+        $this->signIn();
+        $reply = create('App\Reply', ['user_id' => auth()->id()]);
+        $updatedVariable = "You been changed";
+        $this->patch("/replies/{$reply->id}", ['body' => $updatedVariable]);
+        $this->assertDatabaseHas('replies', ['id' => $reply->id, 'body' => $updatedVariable]);
+    }
+
+    /** @test */
+    function unauthorized_users_cannot_update_replies()
+    {
+        $this->withExceptionHandling();
+
+        $reply = create('App\Reply');
+
+        $this->patch("/replies/{$reply->id}")
+            ->assertRedirect('/login');
+
+        $this->signIn()
+            ->patch("/replies/{$reply->id}")
+            ->assertStatus(403);
+
     }
 }

@@ -84,17 +84,23 @@ class RepliesController extends Controller
      */
     public function update(Request $request, Reply $reply)
     {
-        //
+        $this->authorize('update', $reply);
+        $reply->update(request(['body']));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Reply  $reply
+     * @param  \App\Reply $reply
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Reply $reply)
     {
-        //
+        $this->authorize('update', $reply);
+
+        $reply->delete();
+
+        return back();
     }
 }
