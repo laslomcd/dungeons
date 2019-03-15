@@ -23,6 +23,7 @@
     <style>
         body {
             padding-bottom: 100px;
+            background-color: #2b4762;
         }
         .level {
             display: flex;

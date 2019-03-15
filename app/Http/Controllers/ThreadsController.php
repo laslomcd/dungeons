@@ -9,6 +9,8 @@ use App\Thread;
 use App\Filters\ThreadFilters;
 use App\User;
 use function auth;
+use function cache;
+use Carbon\Carbon;
 use function compact;
 use Illuminate\Http\Request;
 use function redirect;
@@ -82,11 +84,16 @@ class ThreadsController extends Controller
     /**
      * Display the specified resource.
      * @param $channelId
-     * @param  \App\Thread  $thread
+     * @param  \App\Thread $thread
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function show($channelId, Thread $thread)
     {
+        if(auth()->check()) {
+            auth()->user()->read($thread);
+        }
+
         return view('threads.show', compact('thread'));
     }
 

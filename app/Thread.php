@@ -5,10 +5,12 @@ namespace App;
 use App\Events\ThreadHasNewReply;
 use App\Notifications\ThreadWasUpdated;
 use function auth;
+use function cache;
 use function foo\func;
 use function get_class;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
+use function sprintf;
 use function strtolower;
 
 class Thread extends Model
@@ -131,5 +133,14 @@ class Thread extends Model
         return $this->subscriptions()
             ->where('user_id', auth()->id())
             ->exists();
+    }
+
+    public function hasUpdatesFor($user = null)
+    {
+        $user = $user ?: auth()->user();
+
+        $key = $user->visitedThreadCacheKey($this);
+
+        return $this->updated_at > cache($key);
     }
 }
