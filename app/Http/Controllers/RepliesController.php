@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Inspections\Spam;
 use App\Reply;
-use App\Spam;
 use App\Thread;
-use function auth;
 use Exception;
 use Illuminate\Http\Request;
-use function str_contains;
-use function stripos;
 
 class RepliesController extends Controller
 {
@@ -43,11 +40,12 @@ class RepliesController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @param $channelId
-     * @param  \Illuminate\Http\Request $request
+     * @param integer $channelId
+     * @param Request $request
      * @param Thread $thread
-     * @param Spam $spam
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param \App\Inspections\Spam $spam
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws Exception
      */
     public function store($channelId, Request $request, Thread $thread, Spam $spam)
     {
