@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Reply;
+use App\Spam;
 use App\Thread;
 use function auth;
+use Exception;
 use Illuminate\Http\Request;
+use function str_contains;
+use function stripos;
 
 class RepliesController extends Controller
 {
@@ -40,12 +44,16 @@ class RepliesController extends Controller
     /**
      * Store a newly created resource in storage.
      * @param $channelId
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param Thread $thread
+     * @param Spam $spam
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store($channelId, Request $request, Thread $thread)
+    public function store($channelId, Request $request, Thread $thread, Spam $spam)
     {
         $this->validate($request, ['body' => 'required']);
+
+        $spam->detect(\request('body'));
 
         $reply = $thread->addReply([
             'body' => request('body'),
