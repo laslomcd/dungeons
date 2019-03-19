@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Inspections\Spam;
 use App\Reply;
 use App\Thread;
 use Exception;
-use Illuminate\Http\Request;
+
 
 class RepliesController extends Controller
 {
@@ -31,7 +30,7 @@ class RepliesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function create()
     {
@@ -41,24 +40,26 @@ class RepliesController extends Controller
     /**
      * Store a newly created resource in storage.
      * @param integer $channelId
-     * @param Request $request
      * @param Thread $thread
-     * @param \App\Inspections\Spam $spam
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Http\RedirectResponse
      * @throws Exception
      */
-    public function store($channelId, Request $request, Thread $thread, Spam $spam)
+    public function store($channelId, Thread $thread)
     {
-        $this->validate($request, ['body' => 'required']);
 
-        $spam->detect(\request('body'));
+        try {
+            $this->validate(request(), ['body' => 'required|spamfree']);
 
-        $reply = $thread->addReply([
-            'body' => request('body'),
-            'user_id' => auth()->id()
-        ]);
+            $reply = $thread->addReply([
+                'body' => request('body'),
+                'user_id' => auth()->id()
+            ]);
+        } catch (\Exception $e) {
+            return response('Sorry, your reply could not be saved at this time', 422);
+        }
 
-        if(request()->expectsJson()) {
+
+        if (request()->expectsJson()) {
             return $reply->load('owner');
         };
 
@@ -68,8 +69,8 @@ class RepliesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Reply  $reply
-     * @return \Illuminate\Http\Response
+     * @param  \App\Reply $reply
+     * @return void
      */
     public function show(Reply $reply)
     {
@@ -79,8 +80,8 @@ class RepliesController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Reply  $reply
-     * @return \Illuminate\Http\Response
+     * @param  \App\Reply $reply
+     * @return void
      */
     public function edit(Reply $reply)
     {
@@ -90,14 +91,23 @@ class RepliesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Reply  $reply
-     * @return \Illuminate\Http\Response
+     * @param  \App\Reply $reply
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Reply $reply)
+    public function update(Reply $reply)
     {
         $this->authorize('update', $reply);
-        $reply->update(request(['body']));
+
+        try {
+            $this->validate(request(), ['body' => 'required|spamfree']);
+
+            $reply->update(request(['body']));
+        } catch (\Exception $e) {
+            return response('Sorry, your reply could not be updated', 422);
+        }
+
+
     }
 
     /**
@@ -113,7 +123,7 @@ class RepliesController extends Controller
 
         $reply->delete();
 
-        if(request()->expectsJson()) {
+        if (request()->expectsJson()) {
             return response(['status' => 'Reply deleted']);
         };
 

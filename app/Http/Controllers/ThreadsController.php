@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use function abort;
 use App\Channel;
+use App\Inspections\Spam;
 use App\Thread;
 use App\Filters\ThreadFilters;
 use App\User;
@@ -58,16 +59,18 @@ class ThreadsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return
+     * @param  \Illuminate\Http\Request $request
+     * @param Spam $spam
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
-    public function store(Request $request)
+    public function store(Request $request, Spam $spam)
     {
 
         $this->validate($request, [
             'channel_id' => 'required|exists:channels,id',
-            'title' => 'required',
-            'body' => 'required'
+            'title' => 'required|spamfree',
+            'body' => 'required|spamfree'
         ]);
 
         $thread = Thread::create([
