@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePostForm;
+use App\Notifications\YouWereMentioned;
 use App\Reply;
 use App\Thread;
+use App\User;
 use Exception;
+use Gate;
+use function preg_match_all;
 
 
 class RepliesController extends Controller
@@ -41,29 +46,28 @@ class RepliesController extends Controller
      * Store a newly created resource in storage.
      * @param integer $channelId
      * @param Thread $thread
+     * @param CreatePostForm $form
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Http\RedirectResponse
-     * @throws Exception
      */
-    public function store($channelId, Thread $thread)
+    public function store($channelId, Thread $thread, CreatePostForm $form)
     {
+        $reply = $thread->addReply([
+            'body' => request('body'),
+            'user_id' => auth()->id()
+        ]);
 
-        try {
-            $this->validate(request(), ['body' => 'required|spamfree']);
+        preg_match_all('/\@([^\s\.]+)/', $reply->body, $matches);
 
-            $reply = $thread->addReply([
-                'body' => request('body'),
-                'user_id' => auth()->id()
-            ]);
-        } catch (\Exception $e) {
-            return response('Sorry, your reply could not be saved at this time', 422);
+        $names = $matches[1];
+
+        foreach ($names as $name) {
+            $user = User::whereName($name)->first();
+
+            if($user) {
+                $user->notify(new YouWereMentioned($reply));
+            }
         }
-
-
-        if (request()->expectsJson()) {
-            return $reply->load('owner');
-        };
-
-        return back()->with('flash', 'Your reply has been left!');
+        return $reply->load('owner');
     }
 
     /**
