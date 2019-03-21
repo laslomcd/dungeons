@@ -39,6 +39,9 @@
             display: none;
         }
     </style>
+
+    @yield('header')
+
 </head>
 <body style="padding-bottom: 100px;">
     <div id="app">
