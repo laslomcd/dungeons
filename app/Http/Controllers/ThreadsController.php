@@ -64,7 +64,7 @@ class ThreadsController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function store(Request $request, Spam $spam)
+    public function store(Request $request)
     {
 
         $this->validate($request, [
