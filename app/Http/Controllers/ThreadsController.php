@@ -73,7 +73,6 @@ class ThreadsController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'channel_id' => 'required|exists:channels,id',
             'title' => 'required|spamfree',
