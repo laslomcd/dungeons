@@ -2,23 +2,15 @@
 
 namespace App;
 
-use App\Events\ThreadHasNewReply;
+
 use App\Events\ThreadReceivedNewReply;
-use App\Notifications\ThreadWasUpdated;
-use function auth;
-use function cache;
-use function foo\func;
-use function get_class;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Redis;
-use ReflectionClass;
-use function sprintf;
-use function strtolower;
+
 
 class Thread extends Model
 {
 
-    use RecordsActivity, RecordsVisits;
+    use RecordsActivity;
 
     protected $guarded = [];
 
@@ -137,6 +129,11 @@ class Thread extends Model
         $key = $user->visitedThreadCacheKey($this);
 
         return $this->updated_at > cache($key);
+    }
+
+    public function visits()
+    {
+        return new Visits($this);
     }
 
 }
