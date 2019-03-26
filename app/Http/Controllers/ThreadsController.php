@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-
-use function abort;
+//
+//use function abort;
 use App\Channel;
 use App\Inspections\Spam;
 use App\Thread;
 use App\Filters\ThreadFilters;
 use App\Trending;
-use App\User;
+//use App\User;
 use function auth;
-use function cache;
-use Carbon\Carbon;
+//use function cache;
+//use Carbon\Carbon;
 use function compact;
 use Illuminate\Http\Request;
-use function json_decode;
-use function json_encode;
+//use function json_decode;
+//use function json_encode;
 use function redirect;
 use function response;
 
@@ -105,6 +105,7 @@ class ThreadsController extends Controller
         }
 
         $trending->push($thread);
+        $thread->recordVisits();
 
 
         return view('threads.show', compact('thread'));

@@ -10,6 +10,7 @@ use function cache;
 use function foo\func;
 use function get_class;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Redis;
 use ReflectionClass;
 use function sprintf;
 use function strtolower;
@@ -17,7 +18,7 @@ use function strtolower;
 class Thread extends Model
 {
 
-    use RecordsActivity;
+    use RecordsActivity, RecordsVisits;
 
     protected $guarded = [];
 
@@ -137,4 +138,5 @@ class Thread extends Model
 
         return $this->updated_at > cache($key);
     }
+
 }
