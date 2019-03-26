@@ -8,12 +8,15 @@ use App\Channel;
 use App\Inspections\Spam;
 use App\Thread;
 use App\Filters\ThreadFilters;
+use App\Trending;
 use App\User;
 use function auth;
 use function cache;
 use Carbon\Carbon;
 use function compact;
 use Illuminate\Http\Request;
+use function json_decode;
+use function json_encode;
 use function redirect;
 use function response;
 
@@ -33,9 +36,10 @@ class ThreadsController extends Controller
      *
      * @param Channel $channel
      * @param ThreadFilters $filters
+     * @param Trending $trending
      * @return \Illuminate\Http\Response
      */
-    public function index(Channel $channel, ThreadFilters $filters)
+    public function index(Channel $channel, ThreadFilters $filters, Trending $trending)
     {
         $threads = $this->getThreads($channel, $filters);
 
@@ -43,7 +47,10 @@ class ThreadsController extends Controller
             return $threads;
         }
 
-        return view('threads.index', compact('threads'));
+        return view('threads.index', [
+            'threads' => $threads,
+            'trending' => $trending->get()
+        ]);
     }
 
     /**
@@ -88,14 +95,17 @@ class ThreadsController extends Controller
      * Display the specified resource.
      * @param $channelId
      * @param  \App\Thread $thread
+     * @param Trending $trending
      * @return \Illuminate\Http\Response
-     * @throws \Exception
      */
-    public function show($channelId, Thread $thread)
+    public function show($channelId, Thread $thread, Trending $trending)
     {
         if(auth()->check()) {
             auth()->user()->read($thread);
         }
+
+        $trending->push($thread);
+
 
         return view('threads.show', compact('thread'));
     }
