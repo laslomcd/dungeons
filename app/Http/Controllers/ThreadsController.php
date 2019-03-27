@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 //use function json_encode;
 use function redirect;
 use function response;
+use function str_slug;
 
 class ThreadsController extends Controller
 {
@@ -83,7 +84,8 @@ class ThreadsController extends Controller
             'user_id' => auth()->id(),
             'channel_id' => request('channel_id'),
             'title' => request('title'),
-            'body' => request('body')
+            'body' => request('body'),
+            'slug' => str_slug(request('title'))
         ]);
 
         return redirect($thread->path())

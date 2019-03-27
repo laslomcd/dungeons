@@ -101,4 +101,12 @@ class User extends Authenticatable
         return '/storage/' . $avatar;
 //        return '/storage/' . $avatar ?: 'images/avatars/default.png';
     }
+
+    public function confirm()
+    {
+        $this->confirmed = true;
+        $this->confirmation_token = null;
+
+        $this->save();
+    }
 }
