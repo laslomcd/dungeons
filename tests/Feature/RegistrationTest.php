@@ -5,8 +5,6 @@ namespace Tests\Feature;
 
 use App\Mail\PleaseConfirmYourEmail;
 use App\User;
-use function foo\func;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
 use Session;
 use Tests\TestCase;
@@ -22,7 +20,15 @@ class RegistrationTest extends TestCase
     {
         Mail::fake();
 
-        event (new Registered(create('App\User')));
+        \Session::start();
+
+        $this->post(route('register'), [
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'password' => 'foobar',
+            'password_confirmation' => 'foobar',
+            '_token' => Session::token()
+        ]);
 
         Mail::assertSent(PleaseConfirmYourEmail::class);
     }
@@ -32,7 +38,7 @@ class RegistrationTest extends TestCase
     {
         \Session::start();
 
-        $this->post('/register', [
+        $this->post(route('register'), [
             'name' => 'John',
             'email' => 'john@example.com',
             'password' => 'foobar',
@@ -46,10 +52,11 @@ class RegistrationTest extends TestCase
 
         $this->assertNotNull($user->confirmation_token);
 
-        $response = $this->get('/register/confirm?token=' . $user->confirmation_token);
+        $this->get(route('register.confirm'), ['token' =>  $user->confirmation_token])
+            ->assertRedirect(route('threads'));
 
         $this->assertTrue($user->fresh()->confirmed);
 
-        $response->assertRedirect('/threads');
+
     }
 }
