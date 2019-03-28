@@ -28292,13 +28292,6 @@ module.exports = __webpack_require__(209);
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-window.Vue = __webpack_require__(142);
-
-window.Vue.prototype.authorize = function (handler) {
-  var user = window.App.user;
-
-  return user ? handler(user) : false;
-};
 __webpack_require__(146);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -40518,11 +40511,28 @@ window._ = __webpack_require__(147);
  * code may be modified to fit the specific needs of your application.
  */
 
-try {
-  window.$ = window.jQuery = __webpack_require__(4);
+window.$ = window.jQuery = __webpack_require__(4);
+__webpack_require__(148);
 
-  __webpack_require__(148);
-} catch (e) {}
+window.Vue = __webpack_require__(142);
+
+var authorizations = __webpack_require__(219);
+
+Vue.prototype.authorize = function () {
+    if (!window.App.signedIn) return false;
+
+    for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+        params[_key] = arguments[_key];
+    }
+
+    if (typeof params[0] === 'string') {
+        return authorizations[params[0]](params[1]);
+    }
+
+    return params[0](window.App.user);
+};
+
+Vue.prototype.signedIn = window.App.signedIn;
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -40543,17 +40553,17 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 var token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
-  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 window.events = new Vue();
 
 window.flash = function (message) {
-  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
+    var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
 
-  window.events.$emit('flash', { message: message, level: level });
+    window.events.$emit('flash', { message: message, level: level });
 };
 
 /***/ }),
@@ -62550,6 +62560,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -62563,7 +62576,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             editing: false,
             id: this.data.id,
-            body: this.data.body
+            body: this.data.body,
+            isBest: this.data.isBest,
+            reply: this.data
         };
     },
 
@@ -62571,18 +62586,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         ago: function ago() {
             return __WEBPACK_IMPORTED_MODULE_1_moment___default()(this.data.created_at).fromNow();
-        },
-        signedIn: function signedIn() {
-            return window.App.signedIn;
-        },
-        canUpdate: function canUpdate() {
-            var _this = this;
-
-            return this.authorize(function (user) {
-                return _this.data.user_id == user.id;
-            });
         }
     },
+
+    created: function created() {
+        var _this = this;
+
+        window.events.$on('best-reply-selected', function (id) {
+            _this.isBest = id === _this.id;
+        });
+    },
+
 
     methods: {
         update: function update() {
@@ -62600,6 +62614,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.delete('/replies/' + this.data.id);
 
             this.$emit('deleted', this.data.id);
+        },
+        markBestReply: function markBestReply() {
+            axios.post('/replies/' + this.data.id + '/best');
+
+            window.events.$emit('best-reply-selected', this.data.id);
         }
     }
 });
@@ -63021,7 +63040,11 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "panel panel-default", attrs: { id: "reply-" + _vm.id } },
+    {
+      staticClass: "panel",
+      class: _vm.isBest ? "panel-success" : "panel-default",
+      attrs: { id: "reply-" + _vm.id }
+    },
     [
       _c("div", { staticClass: "panel-heading" }, [
         _c("div", { staticClass: "level" }, [
@@ -63090,31 +63113,50 @@ var render = function() {
           : _c("div", { domProps: { innerHTML: _vm._s(_vm.body) } })
       ]),
       _vm._v(" "),
-      _vm.canUpdate
-        ? _c("div", { staticClass: "panel-footer level" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-info btn-xs mr-1",
-                on: {
-                  click: function($event) {
-                    _vm.editing = true
+      _c("div", { staticClass: "panel-footer level" }, [
+        _vm.authorize("updateReply", _vm.reply)
+          ? _c("div", [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-info btn-xs mr-1",
+                  on: {
+                    click: function($event) {
+                      _vm.editing = true
+                    }
                   }
-                }
-              },
-              [_vm._v("Edit")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
+                },
+                [_vm._v("Edit")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger btn-xs mr-1",
+                  on: { click: _vm.destroy }
+                },
+                [_vm._v("Delete")]
+              )
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            directives: [
               {
-                staticClass: "btn btn-danger btn-xs mr-1",
-                on: { click: _vm.destroy }
-              },
-              [_vm._v("Delete")]
-            )
-          ])
-        : _vm._e()
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.isBest,
+                expression: "! isBest"
+              }
+            ],
+            staticClass: "btn btn-default btn-xs ml-a",
+            on: { click: _vm.markBestReply }
+          },
+          [_vm._v("Best Reply ?")]
+        )
+      ])
     ]
   )
 }
@@ -65171,6 +65213,27 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */
+/***/ (function(module, exports) {
+
+var user = window.App.user;
+
+module.exports = {
+    updateReply: function updateReply(reply) {
+        return reply.user_id === user.id;
+    }
+};
 
 /***/ })
 /******/ ]);
