@@ -116,17 +116,10 @@ class ThreadsController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Thread $thread
-     * @return void
-     */
-    public function update(Request $request, Thread $thread)
-    {
-        //
-    }
+//    public function update(Channel $channel, Thread $thread)
+//    {
+//
+//    }
 
     /**
      * Remove the specified resource from storage.

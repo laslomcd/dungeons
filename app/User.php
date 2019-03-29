@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use function in_array;
 
 /**
  * App\User
@@ -108,5 +109,10 @@ class User extends Authenticatable
         $this->confirmation_token = null;
 
         $this->save();
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->name, ['Ryan', 'Ryan McDonagh']);
     }
 }

@@ -39,7 +39,8 @@ $factory->define(App\Thread::class, function (Faker $faker) {
         'title' => $title,
         'body' => $faker->paragraph,
         'visits' => 0,
-        'slug' => str_slug($title)
+        'slug' => str_slug($title),
+        'locked' => false
     ];
 });
 
@@ -73,5 +74,17 @@ $factory->define(\Illuminate\Notifications\DatabaseNotification::class, function
         },
         'notifiable_type' => 'App\User',
         'data' => ['foo' => 'bar']
+    ];
+});
+
+$factory->state(App\User::class, 'unconfirmed', function () {
+    return [
+        'confirmed' => false
+    ];
+});
+
+$factory->state(App\User::class, 'administrator', function () {
+    return [
+        'name' => 'Ryan'
     ];
 });
