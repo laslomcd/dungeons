@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mb-2">
        <div v-if="signedIn">
             <div class="form-group">
                 <textarea name="body" class="form-control" id="body" placeholder="Have something to say?" rows="5" required v-model="body"></textarea>

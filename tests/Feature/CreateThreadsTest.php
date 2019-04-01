@@ -117,4 +117,19 @@ class CreateThreadsTest extends TestCase
             ->assertSessionHas('flash', 'You must first confirm your email address');
     }
 
+    /** @test */
+    function a_thread_can_be_updated()
+    {
+        $this->signIn();
+
+        $thread = create('App\Thread', ['user_id' => auth()->id()]);
+
+        $this->patchJson($thread->path(), [
+            'title' => 'Changed',
+            'body' => 'Changed Body'
+        ]);
+
+        $this->assertEquals('Changed', $thread->fresh()->title);
+        $this->assertEquals('Changed Body', $thread->fresh()->body);
+    }
 }

@@ -38,6 +38,9 @@
         .ml-a {
             margin-left: auto;
         }
+        .mb-2 {
+            margin-bottom: 2em;
+        }
         [v-cloak] {
             display: none;
         }

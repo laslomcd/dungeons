@@ -30,7 +30,7 @@ class RegistrationTest extends TestCase
             '_token' => Session::token()
         ]);
 
-        Mail::assertSent(PleaseConfirmYourEmail::class);
+        Mail::assertQueued(PleaseConfirmYourEmail::class);
     }
 
     /** @test */
