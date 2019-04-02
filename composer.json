@@ -7,10 +7,12 @@
     "require": {
         "php": ">=7.0.0",
         "ext-json": "*",
+        "algolia/algoliasearch-client-php": "^2.2",
         "barryvdh/laravel-debugbar": "^3.2",
         "fideloper/proxy": "~3.3",
         "kitetail/zttp": "^0.4.0",
         "laravel/framework": "5.5.*",
+        "laravel/scout": "^7.1",
         "laravel/tinker": "~1.0",
         "predis/predis": "^1.1"
     },
