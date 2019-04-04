@@ -19,7 +19,8 @@ trait Favoritable
     {
         $attributes = ['user_id' => auth()->id()];
         if (!$this->favorites()->where($attributes)->exists()) {
-            $this->favorites()->create($attributes);
+            (new Reputation)->award(auth()->user(), Reputation::REPLY_FAVORITED);
+            return $this->favorites()->create($attributes);
         }
     }
 
@@ -30,6 +31,8 @@ trait Favoritable
         $this->favorites()->where($attributes)->get()->each(function ($favorite) {
             $favorite->delete();
         });
+
+        (new Reputation)->reduce(auth()->user(), Reputation::REPLY_FAVORITED);
     }
 
     public function favorites()
