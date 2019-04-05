@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use function config;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use function in_array;
@@ -111,8 +112,8 @@ class User extends Authenticatable
         $this->save();
     }
 
-//    public function isAdmin()
-//    {
-//        return in_array($this->name, ['Ryan', 'Ryan McDonagh']);
-//    }
+    public function isAdmin()
+    {
+        return in_array($this->email, config('council.administrators'));
+    }
 }

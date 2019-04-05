@@ -13,17 +13,42 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('flash', require('./components/Flash.vue'));
-Vue.component('paginator', require('./components/Paginator.vue'));
-Vue.component('user-notifications', require('./components/UserNotifications.vue'));
-Vue.component('avatar-form', require('./components/AvatarForm.vue'));
-Vue.component('wysiwyg', require('./components/Wysiwyg.vue'));
+Vue.component("flash", require("./components/Flash.vue"));
+Vue.component("paginator", require("./components/Paginator.vue"));
+Vue.component("user-notifications",
+    require("./components/UserNotifications.vue"));
+Vue.component("avatar-form", require("./components/AvatarForm.vue"));
+Vue.component("activities", require("./components/Activities"));
+Vue.component("activity-layout", require("./components/ActivityLayout"));
+Vue.component("activity-favorite", require("./components/ActivityFavorite"));
+Vue.component("activity-reply", require("./components/ActivityReply"));
+Vue.component("activity-thread", require("./components/ActivityThread"));
+Vue.component("wysiwyg", require("./components/Wysiwyg.vue"));
+Vue.component("dropdown", require("./components/Dropdown.vue"));
+Vue.component("channel-dropdown", require("./components/ChannelDropdown.vue"));
+Vue.component("logout-button", require("./components/LogoutButton"));
+Vue.component("login", require("./components/Login"));
+Vue.component("register", require("./components/Register"));
+Vue.component("highlight", require("./components/Highlight"));
+Vue.component("leaderboard", require("./components/Leaderboard"));
 
-Vue.component('thread-view', require('./pages/Thread.vue'));
-
+Vue.component("thread-view", require("./pages/Thread.vue"));
 
 const app = new Vue({
-    el: '#app'
-});
+    el: "#app",
 
+    data: {
+        searching: false
+    },
+
+    methods: {
+        search() {
+            this.searching = true;
+
+        //     this.$nextTick(() = > {
+        //         this.$refs.search.focus();
+        // });
+        }
+    }
+});
 

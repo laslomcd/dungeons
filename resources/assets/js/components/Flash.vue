@@ -1,5 +1,10 @@
 <template>
-    <div class="alert alert-flash" :class="'alert-'+level" role="alert" v-show="show" v-text="body"></div>
+    <div :class="classes"
+         style="right: 25px; bottom: 25px;"
+         role="alert"
+         v-show="show"
+         v-text="body">
+    </div>
 </template>
 
 <script>
@@ -14,17 +19,31 @@
             }
         },
 
+        computed: {
+            classes() {
+                let defaults = ['fixed', 'p-4', 'border', 'text-white'];
+
+                if (this.level === 'success') defaults.push('bg-green', 'border-green-dark');
+                if (this.level === 'warning') defaults.push('bg-yellow', 'border-yellow-dark');
+                if (this.level === 'danger') defaults.push('bg-red', 'border-red-dark');
+
+                return defaults;
+            }
+        },
+
         created() {
             if (this.message) {
                 this.flash();
             }
 
-            window.events.$on('flash', data => this.flash(data))
+            window.events.$on(
+                'flash', data => this.flash(data)
+            );
         },
 
         methods: {
             flash(data) {
-                if(data) {
+                if (data) {
                     this.body = data.message;
                     this.level = data.level;
                 }
@@ -40,13 +59,5 @@
                 }, 3000);
             }
         }
-    }
+    };
 </script>
-
-<style>
-    .alert-flash {
-        position: fixed;
-        right: 25px;
-        bottom: 25px;
-    }
-</style>

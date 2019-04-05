@@ -21,8 +21,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::view('scan', 'scan');
-
 Route::get('/threads', 'ThreadsController@index')->name('threads');
 Route::get('/threads/create', 'ThreadsController@create')->middleware('must-be-confirmed');
 Route::get('/threads/search', 'SearchController@show');
@@ -32,7 +30,7 @@ Route::post('locked-threads/{thread}', 'LockedThreadsController@store')->name('l
 Route::delete('locked-threads/{thread}', 'LockedThreadsController@destroy')->name('locked-threads.destroy')->middleware('admin');
 Route::delete('/threads/{channel}/{thread}', 'ThreadsController@destroy');
 Route::post('threads', 'ThreadsController@store')->middleware('must-be-confirmed');
-Route::get('/threads/{channel}', 'ThreadsController@index');
+Route::get('/threads/{channel}', 'ThreadsController@index')->name('channels');
 Route::get('/threads/{channel}/{thread}/replies', 'RepliesController@index');
 Route::post('/threads/{channel}/{thread}/replies', 'RepliesController@store');
 Route::patch('/replies/{reply}', 'RepliesController@update');
@@ -54,3 +52,13 @@ Route::get('/register/confirm', 'Auth\RegisterConfirmationController@index')->na
 Route::get("api/users", 'Api\UsersController@index');
 Route::post("api/users/{user}/avatar", 'Api\UserAvatarController@store')->middleware('auth')->name('avatar');
 
+Route::group([
+    'prefix' => 'admin',
+    'middleware' => 'admin',
+    'namespace' => 'Admin'
+], function() {
+    Route::get('/', 'DashboardController@index')->name('admin.dashboard.index');
+    Route::post('/channels', 'ChannelsController@store')->name('admin.channels.store');
+    Route::get('/channels', 'ChannelsController@index')->name('admin.channels.index');
+    Route::get('/channels/create', 'ChannelsController@create')->name('admin.channels.create');
+});

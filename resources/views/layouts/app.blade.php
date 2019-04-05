@@ -24,7 +24,7 @@
     <style>
         body {
             padding-bottom: 100px;
-            background-color: #2b4762;
+            /*background-color: #2b4762;*/
         }
         .level {
             display: flex;
@@ -53,17 +53,33 @@
     @yield('header')
 
 </head>
-<body style="padding-bottom: 100px;">
-    <div id="app">
-        @include('layouts.nav')
+<body class="font-sans bg-grey-lighter h-full">
+<div id="app" class="flex flex-col min-h-full">
+    @include ('layouts.nav')
 
-        @yield('content')
+    <div class="container mx-auto flex flex-1">
+        <div class="flex flex-1">
+            @section('sidebar')
+                @include('sidebar')
+            @show
 
-        <flash message="{{ session('flash') }}"></flash>
+            <div class="px-10 bg-white flex-1">
+                @yield('content')
+            </div>
 
+            @include('channels-sidebar')
+        </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <flash message="{{ session('flash') }}"></flash>
+
+    <div v-cloak>
+        @include('modals.all')
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="{{ asset('js/app.js') }}"></script>
+@yield('scripts')
 </body>
 </html>

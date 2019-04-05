@@ -6,6 +6,8 @@ module.exports = {
     },
 
     isAdmin() {
+        console.log(user);
         return user.isAdmin;
+
     }
 };
