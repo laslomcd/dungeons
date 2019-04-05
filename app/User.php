@@ -3,7 +3,6 @@
 namespace App;
 
 use Carbon\Carbon;
-use function config;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use function in_array;
