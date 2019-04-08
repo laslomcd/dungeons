@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use function abort_if;
 use Closure;
 
 class Administrator

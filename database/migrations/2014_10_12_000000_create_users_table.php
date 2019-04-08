@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('avatar_path')->nullable();
             $table->boolean('confirmed')->default(false);
             $table->string('confirmation_token', 25)->nullable()->unique();
+            $table->boolean('isAdmin')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

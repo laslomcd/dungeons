@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use function config;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use function in_array;
@@ -51,7 +52,8 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'confirmed' => 'boolean'
+        'confirmed' => 'boolean',
+        'isAdmin' => 'boolean'
     ];
 
     /**
@@ -113,6 +115,6 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return in_array($this->name, ['Ryan', 'Ryan McDonagh']);
+        return in_array($this->email, config('admin.admin'));
     }
 }
