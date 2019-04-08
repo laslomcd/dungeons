@@ -10,7 +10,10 @@
                     query="{{ request('q') }}"
             >
 
-                <div class="col-md-8">
+                <div class="col-md-8" style="border: none">
+                    <div class="panel panel-default">
+                        <div class="panel panel-body">
+
                     <ais-results>
                         <template scope="{ result }">
                             <li>
@@ -20,6 +23,8 @@
                             </li>
                         </template>
                     </ais-results>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-4">

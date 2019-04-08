@@ -11,7 +11,6 @@
 |
 */
 
-use Symfony\Component\Routing\Tests\RouterTest;
 
 Route::get('/', function () {
     return view('welcome');

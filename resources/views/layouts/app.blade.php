@@ -13,6 +13,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.1.0/trix.css" rel="stylesheet">
+    <link rel="icon" href="{{ asset('images/dice/favicon-32x32.png') }}" type="image/x-icon">
 
     <script charset="utf-8">
         window.App = {!! json_encode([
