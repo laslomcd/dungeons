@@ -56,6 +56,10 @@ class User extends Authenticatable
         'isAdmin' => 'boolean'
     ];
 
+    protected $appends = [
+        'isAdmin'
+    ];
+
     /**
      * @return string
      */
@@ -116,5 +120,10 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return in_array($this->email, config('admin.admin'));
+    }
+
+    public function getIsAdminAttribute()
+    {
+        return $this->isAdmin();
     }
 }
